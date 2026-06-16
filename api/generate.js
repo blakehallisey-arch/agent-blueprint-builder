@@ -1,0 +1,56 @@
+import { Readable } from "node:stream";
+
+// Vercel serverless function — the production equivalent of server.js.
+// Forwards the browser's request body to the Anthropic Messages API, injecting
+// the API key (which lives only in a Vercel Environment Variable, never in the
+// browser), then returns the response unchanged. Mounted at /api/generate.
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed. Use POST." });
+    return;
+  }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    res
+      .status(500)
+      .json({ error: "ANTHROPIC_API_KEY is not set. Add it in your Vercel project's Environment Variables." });
+    return;
+  }
+
+  try {
+    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    // Streaming request: pipe the Server-Sent Events stream straight through to
+    // the browser so it can render tokens as they arrive. On an upstream error
+    // the body is JSON, not SSE, so forward it as JSON with the right status.
+    if (req.body?.stream) {
+      if (!upstream.ok) {
+        const errBody = await upstream.text();
+        res.status(upstream.status).setHeader("Content-Type", "application/json");
+        res.send(errBody);
+        return;
+      }
+      res.status(200);
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache, no-transform");
+      res.setHeader("Connection", "keep-alive");
+      Readable.fromWeb(upstream.body).pipe(res);
+      return;
+    }
+
+    const data = await upstream.json();
+    res.status(upstream.status).json(data);
+  } catch (err) {
+    console.error("Proxy error:", err);
+    res.status(502).json({ error: "Failed to reach the Anthropic API." });
+  }
+}
