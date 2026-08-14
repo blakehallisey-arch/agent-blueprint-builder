@@ -6,11 +6,10 @@ A React + Vite UI. The Anthropic API key is held server-side and proxied, so it 
 
 ---
 
-## Try it live
+## Run it
 
-> **Live URL:** _add your deployed link here once it's up_
-
-No setup needed — just open the link, pick a workflow, and generate a blueprint.
+Clone it and run it locally — the steps are below. It needs an Anthropic API key,
+which the Express server holds and proxies, so it never reaches the browser.
 
 ---
 
