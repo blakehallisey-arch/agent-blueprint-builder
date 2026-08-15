@@ -4,9 +4,32 @@ import { Readable } from "node:stream";
 // Forwards the browser's request body to the Anthropic Messages API, injecting
 // the API key (which lives only in a Vercel Environment Variable, never in the
 // browser), then returns the response unchanged. Mounted at /api/generate.
+// Best-effort per-IP throttle. In-memory, so it resets on a cold start and a
+// true cap needs a shared store — but it stops a script hammering this on
+// Blake's key, which is the shape of spend that got the org's API access cut
+// off on 8/15.
+const HITS = new Map();
+const RATE_LIMIT = 8;
+const RATE_WINDOW_MS = 60_000;
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const recent = (HITS.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  HITS.set(ip, recent);
+  if (HITS.size > 5000) HITS.clear();
+  return recent.length > RATE_LIMIT;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed. Use POST." });
+    return;
+  }
+
+  const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "unknown";
+  if (rateLimited(ip)) {
+    res.status(429).json({ error: "Too many requests. Wait a minute." });
     return;
   }
 
