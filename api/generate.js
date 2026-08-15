@@ -18,6 +18,33 @@ export default async function handler(req, res) {
     return;
   }
 
+  // The key is Blake's, so the caller does not get to pick the model or the
+  // token count. Everything expensive is pinned here; only the conversation
+  // itself comes from the browser, and it has a size ceiling.
+  const MODEL = "claude-sonnet-4-6";
+  const MAX_TOKENS = 8000;
+  const MAX_BODY_CHARS = 60000;
+
+  const messages = Array.isArray(req.body?.messages) ? req.body.messages : null;
+  if (!messages) {
+    res.status(400).json({ error: "Expected a messages array." });
+    return;
+  }
+  if (JSON.stringify(messages).length > MAX_BODY_CHARS) {
+    res.status(413).json({ error: "Request too large." });
+    return;
+  }
+
+  const payload = {
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    messages,
+    ...(typeof req.body?.system === "string"
+      ? { system: req.body.system.slice(0, 20000) }
+      : {}),
+    ...(req.body?.stream ? { stream: true } : {}),
+  };
+
   try {
     const upstream = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -26,7 +53,7 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify(payload),
     });
 
     // Streaming request: pipe the Server-Sent Events stream straight through to
