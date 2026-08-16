@@ -89,7 +89,14 @@ async function streamOnce(inputs, onProgress) {
   });
   if (!res.ok) {
     let msg = `API ${res.status}`;
-    try { const j = await res.json(); if (j?.error?.message) msg = j.error.message; } catch { /* keep status */ }
+    // The proxy answers a plain string for the turned-off state and Anthropic
+    // answers an object; read both, or a visitor sees "API 503" and thinks the
+    // build is broken when it is only switched off.
+    try {
+      const j = await res.json();
+      if (typeof j?.error === "string") msg = j.error;
+      else if (j?.error?.message) msg = j.error.message;
+    } catch { /* keep status */ }
     throw new Error(msg);
   }
 
