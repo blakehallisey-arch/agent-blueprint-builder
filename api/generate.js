@@ -33,11 +33,14 @@ export default async function handler(req, res) {
     return;
   }
 
+  // No key is a DELIBERATE state, not a misconfiguration: pulling the env var
+  // in Vercel is how this demo is switched off so public traffic cannot spend
+  // Blake's key. It used to answer a 500 telling the visitor to go add an
+  // environment variable, which reads as broken and is addressed to the wrong
+  // person entirely — a recruiter opened this, not a developer.
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    res
-      .status(500)
-      .json({ error: "ANTHROPIC_API_KEY is not set. Add it in your Vercel project's Environment Variables." });
+    res.status(503).json({ error: "This demo is turned off.", paused: true });
     return;
   }
 
