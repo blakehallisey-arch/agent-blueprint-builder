@@ -27,7 +27,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "unknown";
+  // x-vercel-forwarded-for is set by the platform and a caller cannot write it.
+  // This read x-forwarded-for and took entry [0], the CLIENT end of the chain —
+  // rotate one header per request and the throttle below is not a throttle.
+  // Same bug as ask-blake on 8/15 and four more places on 8/17.
+  const fwd = (req.headers["x-vercel-forwarded-for"] || "").trim();
+  const chain = (req.headers["x-forwarded-for"] || "").split(",").map(s => s.trim()).filter(Boolean);
+  const ip = fwd ? fwd.split(",")[0].trim() : (chain.length ? chain[chain.length - 1] : "unknown");
   if (rateLimited(ip)) {
     res.status(429).json({ error: "Too many requests. Wait a minute." });
     return;
