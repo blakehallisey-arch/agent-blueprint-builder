@@ -1,0 +1,12 @@
+# Nothing here is served: Vercel serves dist/ (built by vite) plus api/ as
+# functions. This list keeps anything with secrets or notes in it from even
+# being uploaded to the build. The CLI uploads the WORKING DIRECTORY, not git,
+# so a gitignored .env is still an upload without this file.
+.env
+.env.*
+!.env.example
+.npm-cache
+node_modules
+dist
+.git
+README.md
