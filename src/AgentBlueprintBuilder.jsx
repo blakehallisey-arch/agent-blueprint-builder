@@ -168,7 +168,7 @@ async function generateBlueprint(inputs, onProgress) {
 const C = {
   ink: "#0a1530",       // grey-1000  (text1)
   sub: "#40507a",       // grey-800   (text2)
-  faint: "#6b7a9e",     // grey-500   (text3)
+  faint: "#5a6685",     // grey-500   (text3)
   line: "#ccd6ea",      // grey-300   (hairlines)
   lineSoft: "#e6edfb",  // grey-200
   paper: "#ffffff",     // bg1 / cards
