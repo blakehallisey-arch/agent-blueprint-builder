@@ -166,20 +166,20 @@ async function generateBlueprint(inputs, onProgress) {
 // white surfaces, deep navy, electric-blue brand, with teal / blue / purple /
 // amber as the four layer accents.
 const C = {
-  ink: "#1d2228",       // grey-1000  (text1)
-  sub: "#464e56",       // grey-800   (text2)
-  faint: "#828a93",     // grey-500   (text3)
-  line: "#e0e4e9",      // grey-300   (hairlines)
-  lineSoft: "#f0f3f5",  // grey-200
+  ink: "#0a1530",       // grey-1000  (text1)
+  sub: "#40507a",       // grey-800   (text2)
+  faint: "#6b7a9e",     // grey-500   (text3)
+  line: "#ccd6ea",      // grey-300   (hairlines)
+  lineSoft: "#e6edfb",  // grey-200
   paper: "#ffffff",     // bg1 / cards
-  surface: "#f5f8fa",   // grey-100   (canvas)
-  navy: "#15212f",      // blue-800   (deep accent)
+  surface: "#e4ecfa",   // grey-100   (canvas)
+  navy: "#0a1530",      // blue-800   (deep accent)
   reach: "#04c3c5",     // green-base (teal)
-  understand: "#0f69ff",// blue-base  (brand)
-  respect: "#9e62ff",   // purple-base
+  understand: "#1d4ed8",// blue-base  (brand)
+  respect: "#6b5ce0",   // purple-base
   act: "#b26a12",       // readable amber (Squid amber #ffb706, darkened for text)
   danger: "#eb0f29",    // fail1
-  info: "#0f69ff",      // brand blue
+  info: "#1d4ed8",      // brand blue
 };
 const LAYER = {
   reach: { label: "Reach", sub: "what it connects to", color: C.reach },
@@ -240,7 +240,7 @@ function loadExample(key) {
    4. COMPONENTS
 ---------------------------------------------------------------------------- */
 const font = `Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
-const display = `"Space Grotesk", Inter, -apple-system, BlinkMacSystemFont, sans-serif`;
+const display = `"Newsreader", Georgia, serif`;
 
 function Field({ label, hint, children }) {
   return (
@@ -276,7 +276,7 @@ function DiscoveryForm({ inputs, setInputs, onGenerate, loading }) {
               <button key={s} onClick={() => toggleSystem(s)} style={{
                 fontFamily: font, fontSize: 13, fontWeight: 500, padding: "6px 14px", borderRadius: 999, cursor: "pointer",
                 border: `1px solid ${on ? C.info : C.line}`, color: on ? C.info : C.sub,
-                background: on ? "#e7f0ff" : C.paper, transition: "all .12s",
+                background: on ? "#e6edfb" : C.paper, transition: "all .12s",
               }}>{s}</button>
             );
           })}
@@ -310,7 +310,7 @@ function DiscoveryForm({ inputs, setInputs, onGenerate, loading }) {
         </select>
         <button onClick={onGenerate} disabled={loading || !inputs.pain} style={{
           fontFamily: font, fontSize: 14, fontWeight: 600, padding: "12px 28px", borderRadius: 999, cursor: loading || !inputs.pain ? "default" : "pointer",
-          border: "none", color: "#fff", background: loading || !inputs.pain ? "#c4ccd9" : C.info, transition: "background .12s",
+          border: "none", color: "#fff", background: loading || !inputs.pain ? "#b9c6e0" : C.info, transition: "background .12s",
         }}>{loading ? "Mapping the blueprint…" : "Generate blueprint"}</button>
       </div>
     </div>
@@ -330,7 +330,7 @@ function ComparisonCards({ hg }) {
           </div>
         ))}
       </div>
-      <div style={{ border: `1.5px solid ${C.info}`, borderRadius: 18, padding: "16px 18px", background: "#f5f9ff" }}>
+      <div style={{ border: `1.5px solid ${C.info}`, borderRadius: 18, padding: "16px 18px", background: "#f4f6ff" }}>
         <div style={{ fontFamily: display, fontSize: 12, fontWeight: 600, color: C.info, textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 8 }}>A real agent</div>
         <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>
           Reaches your actual systems, understands how the pieces relate, enforces who can see what, and takes a scoped action with a human in the loop. See the Implementation tab for exactly what that requires.
@@ -544,7 +544,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: font, background: C.surface, minHeight: "100vh", padding: "40px 20px", color: C.ink }}>
-      <div style={{ maxWidth: 720, margin: "0 auto", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 24, padding: "34px 38px", boxShadow: "0px 0px 16px #1d22280d, 0px 20px 20px -16px #1d222814" }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 24, padding: "34px 38px", boxShadow: "0px 0px 16px #0a15300d, 0px 20px 20px -16px #0a153014" }}>
         <div style={{ marginBottom: 26 }}>
           <div style={{ fontFamily: display, fontSize: 12, fontWeight: 600, color: C.info, textTransform: "uppercase", letterSpacing: ".08em" }}>Agent Blueprint Builder</div>
           <h1 style={{ fontFamily: display, fontSize: 26, fontWeight: 600, color: C.ink, margin: "8px 0 0", lineHeight: 1.2, letterSpacing: "-.015em" }}>
