@@ -13,6 +13,10 @@
     <style>
       @keyframes abb-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.35 } }
       @keyframes abb-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+      @media (max-width: 640px) {
+        div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+        div[style*="gap: 10"] { flex-wrap: wrap; }
+      }
     </style>
   </head>
   <body style="margin: 0">
